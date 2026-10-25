@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Deep Dive English · 함께한 만큼, 깔끔하게</title>
+ <meta name="description" content="테이블별 메뉴와 참여자를 선택하는 Deep Dive English 정산 도구">
+ <link rel="stylesheet" href="style.css"><script src="core.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+ <header><a class="brand" href="./"><span class="logo">d.</span><span>DEEP DIVE<span class="brand-sub">ENGLISH CLUB</span></span></a><span class="header-tag">AFTER THE CONVERSATION</span><span id="save-state" role="status">이 브라우저에 자동 저장</span></header>
+ <main>
+ <section class="intro"><div><div class="eyebrow">OUR TABLE, OUR SHARE</div><h1>즐거운 대화 뒤,<br>정산도 가볍게.</h1><p>함께 먹은 메뉴만, 함께 나누세요.</p></div><div class="intro-mark" aria-hidden="true"><span>let’s<br>split it.</span><i>↗</i></div></section>
+ <div class="toolbar"><label>모임 날짜 <input type="date" id="meeting-date"></label><div><button id="demo" class="text-button">예시로 살펴보기 ↗</button><button id="all-notice" class="primary">전체 테이블 공지 만들기</button><button id="backup" class="text-button">기록 다운로드 ↓</button></div></div>
+ <nav class="tables" aria-label="테이블 선택"><div id="table-tabs"></div><button id="add-table">＋ 테이블 추가</button></nav>
+ <div class="workspace"><div class="editor">
+  <section class="card"><div class="section-heading"><span class="step">01</span><div><h2>누가 함께했나요?</h2><p>이 테이블에 앉은 사람부터 입력해 주세요.</p></div></div>
+   <label class="small-label">테이블 이름<input id="table-name" maxlength="40" placeholder="예: 창가 테이블"></label>
+   <form id="person-form" class="inline-form"><label class="sr-only" for="person-name">참석자 이름</label><input id="person-name" maxlength="40" placeholder="참석자 이름" autocomplete="off" required><button class="primary">＋ 추가</button></form>
+   <div id="people" class="people"></div><label class="payer-label">먼저 결제한 사람<select id="payer"><option value="">결제자를 선택하세요</option></select></label>
+  </section>
+  <section class="card"><div class="section-heading"><span class="step">02</span><div><h2>무엇을 먹었나요?</h2><p>메뉴를 추가하고, 먹은 사람을 체크하세요.</p></div></div>
+   <div id="items"></div><button id="add-item" class="add-item">＋ 메뉴 추가</button><p class="footnote">금액은 수량을 포함한 해당 메뉴의 총액으로 입력해 주세요.</p>
+  </section>
+  <section class="card"><div class="section-heading"><span class="step">03</span><div><h2>어디로 보내면 되나요?</h2><p>정산 공지에 포함할 입금 계좌입니다.</p></div></div>
+   <div class="account-grid"><label>은행<input id="bank" placeholder="은행명" maxlength="40"></label><label>예금주<input id="holder" placeholder="예금주 이름" maxlength="40"></label><label class="full">계좌번호<input id="account-number" placeholder="계좌번호 입력" inputmode="text" maxlength="60"></label></div>
+  </section>
+ </div><aside class="summary"><div class="summary-head"><span class="eyebrow">THE SPLIT</span><span id="summary-table"></span></div><h2>우리 테이블 정산</h2><div class="total-label">총 주문 금액</div><div id="total" class="total">0<span>원</span></div><div id="summary-content"></div><div class="rounding">1원 단위 나머지는 메뉴별 참석자 등록 순서대로 배분합니다.</div><button id="make-notice" class="primary wide">정산 공지 만들기 ↗</button><p class="summary-note">공지 복사 후 모임 채팅방에 붙여 넣으세요.</p></aside></div>
+ <footer><span>DEEP DIVE ENGLISH</span><p>같은 브라우저에 저장됩니다. 다른 기기와 자동으로 공유되지 않습니다.<br>입금 확인은 담당자가 직접 표시합니다.</p></footer>
+ </main>
+ <dialog id="notice-dialog"><div class="dialog-heading"><h2>정산 공지</h2><button id="close-notice" aria-label="공지 닫기">✕</button></div><label class="sr-only" for="notice-text">복사할 정산 공지</label><textarea id="notice-text" readonly></textarea><button id="copy-notice" class="primary wide">공지 복사하기</button></dialog>
+ <div id="toast" role="status" aria-live="polite" hidden></div>
+</body></html>
