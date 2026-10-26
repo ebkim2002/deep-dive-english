@@ -102,7 +102,7 @@ $('#add-table').addEventListener('click',()=>{const t=newTable(`${state.tables.l
 $('#table-name').addEventListener('input',()=>{table().name=$('#table-name').value;save();renderTabs();renderSummary();});
 $('#meeting-date').addEventListener('change',()=>{state.date=$('#meeting-date').value;save();});
 for(const [selector,field] of [['#bank','bank'],['#holder','holder'],['#account-number','number']])$(selector).addEventListener('input',()=>{table().account[field]=$(selector).value;save();});
-$('#make-notice').addEventListener('click',()=>{try {$('#notice-text').value=notice(table(),state.date);$('#notice-dialog').showModal();}catch(error){toast(error.message);}});
+$('#make-notice').addEventListener('click',()=>{try {openNotice(notice(table(),state.date));}catch(error){toast(error.message);}});
 $('#close-notice').addEventListener('click',()=>$('#notice-dialog').close());
 $('#copy-notice').addEventListener('click',async()=>{
  try {await navigator.clipboard.writeText($('#notice-text').value);toast('정산 공지를 복사했습니다.');}
@@ -118,6 +118,54 @@ $('#demo').addEventListener('click',()=>{
 render();
 
 $('#all-notice').addEventListener('click',()=>{
- try { $('#notice-text').value=combinedNotice(state.tables,state.date);$('#notice-dialog').showModal(); }
+ try { openNotice(combinedNotice(state.tables,state.date)); }
  catch(error){toast(error.message);}
+});
+
+let imageRequest=0;
+let imageURLs=[];
+function clearNoticeImages(){
+ imageRequest++;
+ imageURLs.forEach(url=>URL.revokeObjectURL(url));imageURLs=[];
+ $('#notice-images').replaceChildren();$('#notice-images').hidden=true;
+ $('#image-status').textContent='';$('#make-image').disabled=false;
+}
+function openNotice(text){
+ clearNoticeImages();$('#notice-text').value=text;$('#notice-dialog').showModal();
+}
+$('#notice-dialog').addEventListener('close',clearNoticeImages);
+$('#make-image').addEventListener('click',async()=>{
+ clearNoticeImages();const request=imageRequest;
+ $('#make-image').disabled=true;$('#image-status').textContent='공지 전체를 이미지로 만들고 있습니다…';
+ try{
+  const blobs=await NoticeImage.renderNotice($('#notice-text').value);
+  if(request!==imageRequest||!$('#notice-dialog').open)return;
+  const fragment=document.createDocumentFragment();
+  blobs.forEach((blob,index)=>{
+   const url=URL.createObjectURL(blob);imageURLs.push(url);
+   const name=`deep-dive-${state.date||'settlement'}-${index+1}of${blobs.length}.png`;
+   const card=document.createElement('article');card.className='notice-image-card';
+   const heading=document.createElement('h3');heading.textContent=`정산 공지 ${index+1} / ${blobs.length}장`;
+   const img=document.createElement('img');img.src=url;img.alt=`정산 공지 ${index+1}/${blobs.length}장 미리보기`;
+   const actions=document.createElement('div');actions.className='notice-actions';
+   const download=document.createElement('a');download.href=url;download.download=name;download.className='image-download';download.textContent=`${index+1}장 PNG 저장`;
+   actions.append(download);
+   if(typeof File==='function'&&navigator.canShare&&navigator.share){
+    const file=new File([blob],name,{type:'image/png'});
+    if(navigator.canShare({files:[file]})){
+     const share=document.createElement('button');share.textContent=`${index+1}장 이미지 공유`;
+     share.addEventListener('click',async()=>{
+      try{await navigator.share({files:[file]});}
+      catch(error){if(error.name!=='AbortError')$('#image-status').textContent='공유를 열지 못했습니다. PNG 저장 또는 이미지 길게 누르기를 이용해 주세요.';}
+     });actions.append(share);
+    }
+   }
+   card.append(heading,img,actions);fragment.append(card);
+  });
+  $('#notice-images').append(fragment);$('#notice-images').hidden=false;
+  $('#image-status').textContent=`${blobs.length}장의 이미지를 만들었습니다. 각 장을 저장해 채팅방에 올려 주세요. 휴대폰에서는 이미지를 길게 눌러 저장할 수도 있습니다.`;
+  $('#notice-images').scrollIntoView({block:'start',behavior:'smooth'});
+ }catch(error){
+  if(request===imageRequest){$('#image-status').textContent=error.message||'이미지를 만들지 못했습니다. 텍스트 복사를 이용해 주세요.';}
+ }finally{if(request===imageRequest)$('#make-image').disabled=false;}
 });

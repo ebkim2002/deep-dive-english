@@ -4,7 +4,7 @@
  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
  <title>Deep Dive English · 함께한 만큼, 깔끔하게</title>
  <meta name="description" content="테이블별 메뉴와 참여자를 선택하는 Deep Dive English 정산 도구">
- <link rel="stylesheet" href="style.css"><script src="core.js" defer></script><script src="app.js" defer></script>
+ <link rel="stylesheet" href="style.css"><script src="core.js" defer></script><script src="notice-image.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
  <header><a class="brand" href="./"><span class="logo">d.</span><span>DEEP DIVE<span class="brand-sub">ENGLISH CLUB</span></span></a><span class="header-tag">AFTER THE CONVERSATION</span><span id="save-state" role="status">이 브라우저에 자동 저장</span></header>
@@ -27,6 +27,6 @@
  </div><aside class="summary"><div class="summary-head"><span class="eyebrow">THE SPLIT</span><span id="summary-table"></span></div><h2>우리 테이블 정산</h2><div class="total-label">총 주문 금액</div><div id="total" class="total">0<span>원</span></div><div id="summary-content"></div><div class="rounding">1원 단위 나머지는 메뉴별 참석자 등록 순서대로 배분합니다.</div><button id="make-notice" class="primary wide">정산 공지 만들기 ↗</button><p class="summary-note">공지 복사 후 모임 채팅방에 붙여 넣으세요.</p></aside></div>
  <footer><span>DEEP DIVE ENGLISH</span><p>같은 브라우저에 저장됩니다. 다른 기기와 자동으로 공유되지 않습니다.<br>입금 확인은 담당자가 직접 표시합니다.</p></footer>
  </main>
- <dialog id="notice-dialog"><div class="dialog-heading"><h2>정산 공지</h2><button id="close-notice" aria-label="공지 닫기">✕</button></div><label class="sr-only" for="notice-text">복사할 정산 공지</label><textarea id="notice-text" readonly></textarea><button id="copy-notice" class="primary wide">공지 복사하기</button></dialog>
+ <dialog id="notice-dialog"><div class="dialog-heading"><h2>정산 공지</h2><button id="close-notice" aria-label="공지 닫기">✕</button></div><label class="sr-only" for="notice-text">복사할 정산 공지</label><textarea id="notice-text" readonly></textarea><div class="notice-actions"><button id="copy-notice">텍스트 복사</button><button id="make-image" class="primary">이미지로 만들기</button></div><p id="image-status" class="image-status" role="status" aria-live="polite"></p><section id="notice-images" aria-label="정산 공지 이미지" hidden></section></dialog>
  <div id="toast" role="status" aria-live="polite" hidden></div>
 </body></html>
