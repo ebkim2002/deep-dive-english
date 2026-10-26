@@ -60,7 +60,22 @@
    '※ 먼저 계산한 분은 본인 부담액을 따로 송금하지 않으시면 됩니다.',
    '※ 메뉴별 1원 단위 나머지는 참석자 등록 순서대로 배분했습니다.'].join('\n');
  }
- const api = {settle,notice,combinedNotice,won};
+ function removeTable(state,id) {
+  const index=state.tables.findIndex(t=>t.id===id);
+  if(index<0)throw Error('테이블을 찾을 수 없습니다.');
+  if(state.tables.length<=1)throw Error('테이블은 최소 한 개가 필요합니다.');
+  state.deletedTable={table:state.tables[index],index};
+  state.tables.splice(index,1);
+  return state.tables[Math.max(0,index-1)].id;
+ }
+ function restoreTable(state) {
+  const deleted=state.deletedTable;
+  if(!deleted || !deleted.table || state.tables.some(t=>t.id===deleted.table.id))throw Error('복원할 테이블이 없습니다.');
+  state.tables.splice(Math.min(Math.max(0,deleted.index),state.tables.length),0,deleted.table);
+  delete state.deletedTable;
+  return deleted.table.id;
+ }
+ const api = {settle,notice,combinedNotice,won,removeTable,restoreTable};
  if (typeof module !== 'undefined' && module.exports) module.exports = api;
  else root.Settlement = api;
 })(globalThis);

@@ -1,6 +1,6 @@
 'use strict';
 const $ = s => document.querySelector(s);
-const {settle, notice, combinedNotice, won} = Settlement;
+const {settle, notice, combinedNotice, won, removeTable, restoreTable} = Settlement;
 const key = 'deep-dive-english.v1';
 const uid = () => crypto.randomUUID();
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -29,6 +29,11 @@ function save(financial = false) {
  if (!storageBlocked) try {localStorage.setItem(key,JSON.stringify(state));$('#save-state').textContent='✓ 이 브라우저에 저장됨';} catch {$('#save-state').textContent='저장 실패 · 기록을 다운로드해 주세요';}
 }
 function renderTabs() {
+ $('#delete-table').disabled=state.tables.length<=1;
+ $('#delete-table').setAttribute('aria-label',`${table().name||'이름 없는 테이블'} 삭제`);
+ $('#table-delete-help').textContent=state.tables.length<=1?'테이블은 최소 한 개가 필요합니다.':'';
+ $('#restore-table').hidden=!state.deletedTable;
+
  $('#table-tabs').innerHTML=state.tables.map(t=>`<button data-table="${escapeHTML(t.id)}" class="tab ${t.id===active?'active':''}" aria-pressed="${t.id===active}">${escapeHTML(t.name||'이름 없는 테이블')}<span>${t.people.length}</span></button>`).join('');
 }
 function renderPeople() {
@@ -98,7 +103,16 @@ $('#items').addEventListener('click',event=>{
 });
 $('#summary-content').addEventListener('change',event=>{const id=event.target.dataset.paid;if(id){table().paid[id]=event.target.checked;save();renderSummary();}});
 $('#table-tabs').addEventListener('click',event=>{const button=event.target.closest('[data-table]');if(button){active=button.dataset.table;render();}});
-$('#add-table').addEventListener('click',()=>{const t=newTable(`${state.tables.length+1}번 테이블`);state.tables.push(t);active=t.id;save();render();$('#person-name').focus();});
+$('#add-table').addEventListener('click',()=>{let n=1;while(state.tables.some(t=>t.name===`${n}번 테이블`))n++;const t=newTable(`${n}번 테이블`);state.tables.push(t);active=t.id;save();render();$('#person-name').focus();});
+$('#delete-table').addEventListener('click',()=>{
+ const t=table();
+ const hasData=t.people.length||t.items.length||t.payer||Object.values(t.account).some(Boolean)||Object.values(t.paid).some(Boolean);
+ if(hasData&&!confirm(`“${t.name||'이름 없는 테이블'}”을 삭제할까요? 참석자, 메뉴, 계좌와 입금 확인 내역이 함께 삭제됩니다. 가장 최근에 삭제한 테이블은 복원할 수 있습니다.`))return;
+ try{active=removeTable(state,active);save();render();$('#delete-table').focus();toast('테이블을 삭제했습니다. 최근 삭제한 테이블 복원 버튼으로 되돌릴 수 있습니다.');}catch(error){toast(error.message);}
+});
+$('#restore-table').addEventListener('click',()=>{
+ try{active=restoreTable(state);save();render();$('#table-name').focus();toast('테이블과 입력 내역을 복원했습니다.');}catch(error){toast(error.message);}
+});
 $('#table-name').addEventListener('input',()=>{table().name=$('#table-name').value;save();renderTabs();renderSummary();});
 $('#meeting-date').addEventListener('change',()=>{state.date=$('#meeting-date').value;save();});
 for(const [selector,field] of [['#bank','bank'],['#holder','holder'],['#account-number','number']])$(selector).addEventListener('input',()=>{table().account[field]=$(selector).value;save();});

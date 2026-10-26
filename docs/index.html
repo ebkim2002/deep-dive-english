@@ -4,14 +4,14 @@
  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
  <title>Deep Dive English · 함께한 만큼, 깔끔하게</title>
  <meta name="description" content="테이블별 메뉴와 참여자를 선택하는 Deep Dive English 정산 도구">
- <link rel="stylesheet" href="style.css"><script src="core.js" defer></script><script src="notice-image.js" defer></script><script src="app.js" defer></script>
+ <link rel="stylesheet" href="style.css?v=20261026-tables"><script src="core.js?v=20261026-tables" defer></script><script src="notice-image.js" defer></script><script src="app.js?v=20261026-tables" defer></script>
 </head>
 <body>
  <header><a class="brand" href="./"><span class="logo">d.</span><span>DEEP DIVE<span class="brand-sub">ENGLISH CLUB</span></span></a><span class="header-tag">AFTER THE CONVERSATION</span><span id="save-state" role="status">이 브라우저에 자동 저장</span></header>
  <main>
  <section class="intro"><div><div class="eyebrow">OUR TABLE, OUR SHARE</div><h1>즐거운 대화 뒤,<br>정산도 가볍게.</h1><p>함께 먹은 메뉴만, 함께 나누세요.</p></div><div class="intro-mark" aria-hidden="true"><span>let’s<br>split it.</span><i>↗</i></div></section>
  <div class="toolbar"><label>모임 날짜 <input type="date" id="meeting-date"></label><div><button id="demo" class="text-button">예시로 살펴보기 ↗</button><button id="all-notice" class="primary">전체 테이블 공지 만들기</button><button id="backup" class="text-button">기록 다운로드 ↓</button></div></div>
- <nav class="tables" aria-label="테이블 선택"><div id="table-tabs"></div><button id="add-table">＋ 테이블 추가</button></nav>
+ <nav class="tables" aria-label="테이블 선택"><div id="table-tabs"></div><button id="add-table">＋ 테이블 추가</button></nav><div class="table-management"><button id="delete-table" class="text-button">선택한 테이블 삭제</button><button id="restore-table" hidden>최근 삭제한 테이블 복원</button><span id="table-delete-help"></span></div>
  <div class="workspace"><div class="editor">
   <section class="card"><div class="section-heading"><span class="step">01</span><div><h2>누가 함께했나요?</h2><p>이 테이블에 앉은 사람부터 입력해 주세요.</p></div></div>
    <label class="small-label">테이블 이름<input id="table-name" maxlength="40" placeholder="예: 창가 테이블"></label>
